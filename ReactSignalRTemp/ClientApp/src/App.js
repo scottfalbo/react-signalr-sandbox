@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
 import { Home } from './components/Home';
-import { HighCard } from './components/HighCard'
+import { HighCard } from './components/highcard/HighCard'
 
 import './custom.css'
 

@@ -9,6 +9,10 @@ namespace ReactSignalRTemp.Hubs
 {
     public class TestHub : Hub
     {
+        /// <summary>
+        /// Main page basic chat server
+        /// </summary>
+        /// <param name="data"> object {user, input, log} </param>
         public async Task SendSignal(object data)
         {
             TestObject result = JsonSerializer.Deserialize<TestObject>(data.ToString());
@@ -17,6 +21,12 @@ namespace ReactSignalRTemp.Hubs
 
             await Clients.All.SendAsync("HeyYou", result.Log);
         }
+
+        public async Task HighCardSignal(object gameData)
+        {
+            await Clients.All.SendAsync("HighCard", gameData);
+        }
+
     }
 
     class TestObject
