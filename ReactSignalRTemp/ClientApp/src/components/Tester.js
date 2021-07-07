@@ -23,10 +23,10 @@ class Tester extends Component {
             this.state.hubConnection
                 .start()
                 .then(() => console.log('it lives'))
-                .catch((e) => console.log("opps: ${e}"));
+                .catch((e) => console.log("opps: "+ e));
 
             this.state.hubConnection.on("HeyYou", (data) => {
-                this.setState({ log : data.log });
+                this.setState({ log : data });
             })
         });
     }
@@ -34,7 +34,7 @@ class Tester extends Component {
     sendSignal = () => {
         this.state.log.push(this.state.input);
         this.state.hubConnection
-            .invoke('SendSignal', this.state)
+            .invoke('SendSignal', this.state.log)
             .catch((e) => console.log(e));
 
         this.setState({ input : '' });

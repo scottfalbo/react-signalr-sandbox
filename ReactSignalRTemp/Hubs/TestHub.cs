@@ -8,10 +8,10 @@ namespace ReactSignalRTemp.Hubs
 {
     public class TestHub : Hub
     {
-        public async Task SendSignal(object state)
+        public async Task SendSignal(object data)
         {
-            
-            await Clients.All.SendAsync("HeyYou", state);
+            Console.WriteLine(data);
+            await Clients.All.SendAsync("HeyYou", data);
         }
     }
 }
