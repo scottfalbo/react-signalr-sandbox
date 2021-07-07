@@ -11,9 +11,6 @@ namespace ReactSignalRTemp.Hubs
     {
         public async Task SendSignal(object data)
         {
-            //WeatherForecast weatherForecast =
-            //    JsonSerializer.Deserialize<WeatherForecast>(jsonString);
-
             TestObject result = JsonSerializer.Deserialize<TestObject>(data.ToString());
             result.Log.Add($"{result.User}: {result.Input}");
 
