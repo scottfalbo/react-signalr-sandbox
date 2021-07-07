@@ -8,29 +8,29 @@ using System.Threading.Tasks;
 
 namespace ReactSignalRTemp.Controllers
 {
-    [ApiController]
-    [Route("api/testhub")]
-    public class SignalController : Controller
-    {
-        private IHubContext<TestHub> _hub;
+    //[ApiController]
+    //[Route("api/testhub")]
+    //public class SignalController : Controller
+    //{
+    //    private IHubContext<TestHub> _hub;
 
-        public void ReactSignalRTemp(IHubContext<TestHub> testHub)
-        {
-            _hub = testHub;
-        }
+    //    public void ReactSignalRTemp(IHubContext<TestHub> testHub)
+    //    {
+    //        _hub = testHub;
+    //    }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(TempObject temp)
-        {
-            await _hub.Clients.All.SendAsync("SendSignal", temp.Input);
+    //    [HttpPost]
+    //    public async Task<IActionResult> Create(TempObject temp)
+    //    {
+    //        await _hub.Clients.All.SendAsync("SendSignal", temp.Input);
 
-            return Ok();
-        }
-    }
+    //        return Ok();
+    //    }
+    //}
 
-    public class TempObject
-    {
-        public virtual string Input { get; set; }
-    }
+    //public class TempObject
+    //{
+    //    public virtual string Input { get; set; }
+    //}
 
 }

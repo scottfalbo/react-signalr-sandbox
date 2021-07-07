@@ -33,7 +33,7 @@ namespace ReactSignalRTemp
             builder =>
             {
                 builder.AllowAnyMethod().AllowAnyHeader()
-                       .WithOrigins("http://localhost:44531")
+                       .WithOrigins("http://localhost:44531", "http://localhost:3000")
                        .AllowCredentials();
             }));
 
