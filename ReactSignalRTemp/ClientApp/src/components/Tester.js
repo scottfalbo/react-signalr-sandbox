@@ -15,7 +15,7 @@ class Tester extends Component {
     componentDidMount = () => {
 
         const hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:44351/testhub")
+            .withUrl("/testhub")
             .configureLogging(signalR.LogLevel.Information)
             .build();
 
@@ -26,7 +26,7 @@ class Tester extends Component {
                 .catch((e) => console.log("opps: ${e}"));
 
             this.state.hubConnection.on("HeyYou", (data) => {
-                this.setState({ log : data });
+                this.setState({ log : data.log });
             })
         });
     }
@@ -34,7 +34,7 @@ class Tester extends Component {
     sendSignal = () => {
         this.state.log.push(this.state.input);
         this.state.hubConnection
-            .invoke('SendSignal', this.state.log)
+            .invoke('SendSignal', this.state)
             .catch((e) => console.log(e));
 
         this.setState({ input : '' });
