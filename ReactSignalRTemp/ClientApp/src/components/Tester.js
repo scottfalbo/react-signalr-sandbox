@@ -6,6 +6,7 @@ class Tester extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            user: 'name',
             input: '',
             log: [],
             hubConnection: null
@@ -14,8 +15,11 @@ class Tester extends Component {
 
     componentDidMount = () => {
 
+        const user = window.prompt('Your name:', ' ');
+        this.setState({ user });
+
         const hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("https://localhost:44351/testhub")
+            .withUrl("/testhub")
             .configureLogging(signalR.LogLevel.Information)
             .build();
 
@@ -23,7 +27,7 @@ class Tester extends Component {
             this.state.hubConnection
                 .start()
                 .then(() => console.log('it lives'))
-                .catch((e) => console.log("opps: ${e}"));
+                .catch((e) => console.log("opps: "+ e));
 
             this.state.hubConnection.on("HeyYou", (data) => {
                 this.setState({ log : data });
@@ -32,9 +36,10 @@ class Tester extends Component {
     }
 
     sendSignal = () => {
-        this.state.log.push(this.state.input);
+        // this.state.log.push(this.state.input);
+        const testObject = new TestObject(this.state.user, this.state.input, this.state.log);
         this.state.hubConnection
-            .invoke('SendSignal', this.state.log)
+            .invoke('SendSignal', testObject)
             .catch((e) => console.log(e));
 
         this.setState({ input : '' });
@@ -59,3 +64,11 @@ class Tester extends Component {
 }
 
 export default Tester;
+
+class TestObject {
+        constructor(user, input, log) {
+            this.User = user;
+            this.Input = input;
+            this.Log = log;
+        }
+}
