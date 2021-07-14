@@ -22,6 +22,11 @@ namespace ReactSignalRTemp.Hubs
             await Clients.All.SendAsync("HeyYou", result.Log);
         }
 
+        /// <summary>
+        /// High Card Hub
+        /// </summary>
+        /// <param name="gameData"></param>
+        /// <returns></returns>
         public async Task HighCardSignal(object gameData)
         {
             await Clients.All.SendAsync("HighCard", gameData);

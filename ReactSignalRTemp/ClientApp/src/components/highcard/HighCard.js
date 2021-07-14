@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
 import * as signalR from '@microsoft/signalr';
 
-class HighCard extends Component {
+export class HighCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            game : null,
+            game : {
+              PlayerOne : { Name : ''},
+              PlayerTwo : { Name : ''}
+            },
             hubConnection: null
         };
     }
 
     componentDidMount = () => {
-
-        this.setState({ user : window.prompt('Your name:', ' ') });
-
+        this.makeGame();
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/testhub")
             .configureLogging(signalR.LogLevel.Information)
@@ -31,24 +32,31 @@ class HighCard extends Component {
         });
     }
 
+    makeGame = () => {
+
+      var game = {...this.state.game};
+      game.PlayerOne.Name = 'Lucipurr';
+      game.PlayerTwo.Name = 'Ethel';
+
+      this.setState({ game });
+      console.log(this.state.game);
+    }
+
     sendSignal = () => {
-        let testObject;
+        let gameObject;
         this.state.hubConnection
-            .invoke('HighCardSignal', testObject)
+            .invoke('HighCardSignal', gameObject)
             .catch((e) => console.log(e));
 
     }
 
+
     render() {
         return (
             <div>
-                <button onClick={this.sendSignal}>Draw</button>
-
-                <div>
-                    {this.state.log.map((msg, index) => (
-                        <span style={{display: 'block'}} key={index}> {msg} </span>
-                    ))}
-                </div>
+                {/* <button onClick={this.sendSignal}>Draw</button> */}
+                <h2>Player One: {this.state.game.PlayerOne.Name}</h2>
+                <h2>Player One: {this.state.game.PlayerTwo.Name}</h2>
             </div>
         );
     }

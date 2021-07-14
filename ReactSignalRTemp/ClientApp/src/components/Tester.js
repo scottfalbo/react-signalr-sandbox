@@ -15,8 +15,8 @@ class Tester extends Component {
 
     componentDidMount = () => {
 
-        if (this.state.user === '')
-            this.setState({ user : window.prompt('Your name:', ' ') });
+        // if (this.state.user === '')
+        //     this.setState({ user : window.prompt('Your name:', ' ') });
 
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/testhub")
