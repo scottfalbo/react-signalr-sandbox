@@ -7,8 +7,8 @@ export class HighCard extends Component {
         super(props);
         this.state = {
             game: {
-                PlayerOne: { Name: '', Score: 0, Card: null },
-                PlayerTwo: { Name: '', Score: 0, Card: null },
+                PlayerOne: { Name: 'Luci', Score: 0, Card: null },
+                PlayerTwo: { Name: 'Ethel', Score: 0, Card: null },
                 NewDeck: [],
                 ShuffledDeck: []
             },
@@ -45,9 +45,11 @@ export class HighCard extends Component {
 
     // Calls the methods to instantiate the deck and populate the game object in state.
     startGame = () => {
+        console.log('game on');
         this.setState({ waiting: false })
         this.createDeck();
-        console.log('game on');
+        this.shuffleDeck();
+        console.log(this.state.game.NewDeck);
     }
 
     // Instantiates the deck of cards in the state game object.
@@ -70,6 +72,24 @@ export class HighCard extends Component {
         game.NewDeck.push(new Card(value, 'diamonds'));
         this.setState({ game });
     }
+
+    // Create a shuffled deck object in state by swapping random cards 1000 times
+    shuffleDeck = () => {
+        console.log('shuffling');
+        let game = {...this.state.game};
+        for (let i = 0; i < 1000; i++) {
+            let x = this.randomNumber();
+            let y = this.randomNumber();
+            let holder = game.NewDeck[x];
+            game.NewDeck[x] = game.NewDeck[y];
+            game.NewDeck[y] = holder;
+        }
+        this.setState({ game });
+    }
+    // Helper random number generator.
+    randomNumber = () => (
+         Math.floor((Math.random() * (52 - 1) + 1))
+    );
 
     // Callback to register players from ScoreBoard
     registerPlayer = (name, p) => {
