@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import * as signalR from '@microsoft/signalr';
 import ScoreBoard from './Scoreboard';
-import Waiting from './Waiting';
 
 export class HighCard extends Component {
     constructor(props) {
@@ -9,7 +8,7 @@ export class HighCard extends Component {
         this.state = {
             game: {
                 PlayerOne: { Name: '', Score: 0, Card: null },
-                PlayerTwo: { Name: 'a', Score: 0, Card: null },
+                PlayerTwo: { Name: '', Score: 0, Card: null },
                 NewDeck: [],
                 ShuffledDeck: []
             },
@@ -36,12 +35,6 @@ export class HighCard extends Component {
                 this.setState({ game: data });
             })
         });
-        this.intervalId = setInterval(() => this.checkPlayers(), 100);
-    }
-
-    // Unmount the interval from the browser on page close.
-    componentWillUnmount() {
-        clearInterval(this.intervalId);
     }
 
     // Checks to see if there are two players in the game object.
@@ -54,6 +47,7 @@ export class HighCard extends Component {
     startGame = () => {
         this.setState({ waiting: false })
         this.createDeck();
+        console.log('game on');
     }
 
     // Instantiates the deck of cards in the state game object.
@@ -96,6 +90,7 @@ export class HighCard extends Component {
     }
 
     render() {
+        const game = {...this.state.game};
 
         return (
             <div>
@@ -105,7 +100,14 @@ export class HighCard extends Component {
                     playerTwo={this.state.game.PlayerTwo}
                     registerPlayer={this.registerPlayer}
                 />
-                <Waiting waiting={this.state.waiting} />
+                {game.PlayerOne.Name !== '' && game.PlayerTwo.Name !== '' ?
+                (<button onClick={this.startGame.bind(this)}>Start Game</button>) :
+                (<section className="waiting-button">
+                    <p>waiting on players</p>
+                </section>)
+
+
+                }
             </div>
         );
     }
