@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as signalR from '@microsoft/signalr';
 import ScoreBoard from './Scoreboard';
+import Waiting from './Waiting';
 
 export class HighCard extends Component {
     constructor(props) {
@@ -8,16 +9,17 @@ export class HighCard extends Component {
         this.state = {
             game: {
                 PlayerOne: { Name: '', Score: 0, Card: null },
-                PlayerTwo: { Name: '', Score: 0, Card: null },
+                PlayerTwo: { Name: 'a', Score: 0, Card: null },
                 NewDeck: [],
                 ShuffledDeck: []
             },
-            hubConnection: null
+            hubConnection: null,
+            waiting: true
         };
     }
 
     // Mount the signalR client.
-    // Call methods to create game populate game object in state.
+    // Mount an interval to check for active players.
     componentDidMount = () => {
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/testhub")
@@ -34,22 +36,27 @@ export class HighCard extends Component {
                 this.setState({ game: data });
             })
         });
-        this.makeGame();
+        this.intervalId = setInterval(() => this.checkPlayers(), 100);
+    }
+
+    // Unmount the interval from the browser on page close.
+    componentWillUnmount() {
+        clearInterval(this.intervalId);
+    }
+
+    // Checks to see if there are two players in the game object.
+    checkPlayers = () => {
+        if (this.state.game.PlayerOne.Name !== '' && this.state.game.PlayerTwo.Name !== '')
+            this.startGame();
+    }
+
+    // Calls the methods to instantiate the deck and populate the game object in state.
+    startGame = () => {
+        this.setState({ waiting: false })
         this.createDeck();
-        this.state.game.NewDeck.forEach(x => {
-            console.log(x.Value + x.Suit);
-        })
     }
 
-    // Populate the game object with players
-    makeGame = () => {
-        var game = { ...this.state.game };
-        game.PlayerOne.Name = 'Lucipurr';
-        game.PlayerTwo.Name = 'Ethel';
-        this.setState({ game });
-    }
-
-    // Instantiates the deck of cards in the state game object
+    // Instantiates the deck of cards in the state game object.
     createDeck = () => {
         for (let i = 1; i < 14; i++) {
             if (i === 1) this.makeCard('A');
@@ -60,12 +67,23 @@ export class HighCard extends Component {
         }
     }
 
+    // Helper method for the deck instantiation.
     makeCard = (value) => {
-        let game = {...this.state.game};
+        let game = { ...this.state.game };
         game.NewDeck.push(new Card(value, 'clubs'));
         game.NewDeck.push(new Card(value, 'spades'));
         game.NewDeck.push(new Card(value, 'hearts'));
         game.NewDeck.push(new Card(value, 'diamonds'));
+        this.setState({ game });
+    }
+
+    // Callback to register players from ScoreBoard
+    registerPlayer = (name, p) => {
+        let game = {...this.state.game};
+        if (p === 1)
+            game.PlayerOne.Name = name;
+        if (p === 2)
+            game.PlayerTwo.Name = name;
         this.setState({ game });
     }
 
@@ -78,13 +96,16 @@ export class HighCard extends Component {
     }
 
     render() {
+
         return (
             <div>
                 {/* <button onClick={this.sendSignal}>Draw</button> */}
                 <ScoreBoard
                     playerOne={this.state.game.PlayerOne}
                     playerTwo={this.state.game.PlayerTwo}
+                    registerPlayer={this.registerPlayer}
                 />
+                <Waiting waiting={this.state.waiting} />
             </div>
         );
     }
