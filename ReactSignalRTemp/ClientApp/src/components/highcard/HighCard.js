@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import * as signalR from '@microsoft/signalr';
+import ScoreBoard from './Scoreboard';
 
 export class HighCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
             game : {
-              PlayerOne : { Name : ''},
-              PlayerTwo : { Name : ''}
+              PlayerOne : { Name : '', Score : 0, Card : null},
+              PlayerTwo : { Name : '', Score : 0, Card : null}
             },
             hubConnection: null
         };
@@ -55,8 +56,10 @@ export class HighCard extends Component {
         return (
             <div>
                 {/* <button onClick={this.sendSignal}>Draw</button> */}
-                <h2>Player One: {this.state.game.PlayerOne.Name}</h2>
-                <h2>Player One: {this.state.game.PlayerTwo.Name}</h2>
+                <ScoreBoard
+                  playerOne = { this.state.game.PlayerOne }
+                  playerTwo = { this.state.game.PlayerTwo }
+                />
             </div>
         );
     }
