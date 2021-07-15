@@ -79,11 +79,12 @@ export class HighCard extends Component {
         if (p === 2)
             game.PlayerTwo.Name = name;
         this.setState({ game });
+        this.sendSignal();
     }
 
     // Callback to send data to the SignalR server
     sendSignal = () => {
-        let gameObject;
+        let gameObject = this.state.game;
         this.state.hubConnection
             .invoke('HighCardSignal', gameObject)
             .catch((e) => console.log(e));
