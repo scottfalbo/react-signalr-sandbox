@@ -9,17 +9,30 @@ namespace ReactSignalRTemp.Hubs
 {
     public class TestHub : Hub
     {
+        /// <summary>
+        /// Main page basic chat server
+        /// </summary>
+        /// <param name="data"> object {user, input, log} </param>
         public async Task SendSignal(object data)
         {
-            //WeatherForecast weatherForecast =
-            //    JsonSerializer.Deserialize<WeatherForecast>(jsonString);
-
             TestObject result = JsonSerializer.Deserialize<TestObject>(data.ToString());
             result.Log.Add($"{result.User}: {result.Input}");
 
 
             await Clients.All.SendAsync("HeyYou", result.Log);
         }
+
+        /// <summary>
+        /// High Card Hub
+        /// </summary>
+        /// <param name="gameData"></param>
+        /// <returns></returns>
+        public async Task HighCardSignal(object gameData, bool waiting)
+        {
+            Console.WriteLine();
+            await Clients.All.SendAsync("HighCard", gameData, waiting);
+        }
+
     }
 
     class TestObject

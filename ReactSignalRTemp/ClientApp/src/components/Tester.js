@@ -6,7 +6,7 @@ class Tester extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: 'name',
+            user: '',
             input: '',
             log: [],
             hubConnection: null
@@ -15,8 +15,8 @@ class Tester extends Component {
 
     componentDidMount = () => {
 
-        const user = window.prompt('Your name:', ' ');
-        this.setState({ user });
+        // if (this.state.user === '')
+        //     this.setState({ user : window.prompt('Your name:', ' ') });
 
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/testhub")
