@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as signalR from '@microsoft/signalr';
 import ScoreBoard from './Scoreboard';
+import GameBoard from './GameBoard';
 
 export class HighCard extends Component {
     constructor(props) {
@@ -9,8 +10,7 @@ export class HighCard extends Component {
             game: {
                 PlayerOne: { Name: 'Luci', Score: 0, Card: null },
                 PlayerTwo: { Name: 'Ethel', Score: 0, Card: null },
-                NewDeck: [],
-                ShuffledDeck: []
+                NewDeck: []
             },
             hubConnection: null,
             waiting: true
@@ -76,7 +76,7 @@ export class HighCard extends Component {
     // Create a shuffled deck object in state by swapping random cards 1000 times
     shuffleDeck = () => {
         console.log('shuffling');
-        let game = {...this.state.game};
+        let game = { ...this.state.game };
         for (let i = 0; i < 1000; i++) {
             let x = this.randomNumber();
             let y = this.randomNumber();
@@ -88,12 +88,12 @@ export class HighCard extends Component {
     }
     // Helper random number generator.
     randomNumber = () => (
-         Math.floor((Math.random() * (52 - 1) + 1))
+        Math.floor((Math.random() * (52 - 1) + 1))
     );
 
     // Callback to register players from ScoreBoard
     registerPlayer = (name, p) => {
-        let game = {...this.state.game};
+        let game = { ...this.state.game };
         if (p === 1)
             game.PlayerOne.Name = name;
         if (p === 2)
@@ -111,7 +111,8 @@ export class HighCard extends Component {
     }
 
     render() {
-        const game = {...this.state.game};
+        const game = { ...this.state.game };
+        const waiting = this.state.waiting;
 
         return (
             <div>
@@ -121,14 +122,19 @@ export class HighCard extends Component {
                     playerTwo={this.state.game.PlayerTwo}
                     registerPlayer={this.registerPlayer}
                 />
-                {game.PlayerOne.Name !== '' && game.PlayerTwo.Name !== '' ?
-                (<button onClick={this.startGame.bind(this)}>Start Game</button>) :
-                (<section className="waiting-button">
-                    <p>waiting on players</p>
-                </section>)
-
-
+                {game.PlayerOne.Name !== '' && game.PlayerTwo.Name !== '' && this.state.waiting ?
+                    (<button onClick={this.startGame.bind(this)}>Start Game</button>) :
+                    this.state.waiting ?
+                    (<section className="waiting-button">
+                        <p>waiting on players</p>
+                    </section>):
+                    null
                 }
+                {!waiting ?
+                    (<GameBoard
+                        game={this.state.game}
+                    />) :
+                    (<div></div>)}
             </div>
         );
     }
