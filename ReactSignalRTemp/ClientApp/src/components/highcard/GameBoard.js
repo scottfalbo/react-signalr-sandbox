@@ -11,7 +11,9 @@ export class GameBoard extends Component {
     render() {
         return (
             <section className='game-board'>
-                Game Board
+                {this.props.game.PlayerOne.Name}
+                {this.props.game.PlayerTwo.Name}
+                {this.props.game.NewDeck[0].Value}
             </section>
         );
     }

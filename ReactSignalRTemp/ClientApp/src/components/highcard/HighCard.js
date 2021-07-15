@@ -8,8 +8,8 @@ export class HighCard extends Component {
         super(props);
         this.state = {
             game: {
-                PlayerOne: { Name: 'Luci', Score: 0, Card: null },
-                PlayerTwo: { Name: 'Ethel', Score: 0, Card: null },
+                PlayerOne: { Name: '', Score: 0, Card: null },
+                PlayerTwo: { Name: '', Score: 0, Card: null },
                 NewDeck: []
             },
             hubConnection: null,
@@ -31,25 +31,20 @@ export class HighCard extends Component {
                 .then(() => console.log('it lives'))
                 .catch((e) => console.log("opps: " + e));
 
-            this.state.hubConnection.on("HighCard", (data) => {
-                this.setState({ game: data });
+            this.state.hubConnection.on("HighCard", (data, waiting) => {
+                let game = { ...this.state.game };
+                game = data;
+                this.setState({ game, waiting : waiting });
             })
         });
     }
 
-    // Checks to see if there are two players in the game object.
-    checkPlayers = () => {
-        if (this.state.game.PlayerOne.Name !== '' && this.state.game.PlayerTwo.Name !== '')
-            this.startGame();
-    }
-
     // Calls the methods to instantiate the deck and populate the game object in state.
     startGame = () => {
-        console.log('game on');
-        this.setState({ waiting: false })
+        this.setState({ waiting: false });
         this.createDeck();
-        this.shuffleDeck();
-        console.log(this.state.game.NewDeck);
+        this.shuffleDeck();     
+        this.sendSignal();
     }
 
     // Instantiates the deck of cards in the state game object.
@@ -75,7 +70,6 @@ export class HighCard extends Component {
 
     // Create a shuffled deck object in state by swapping random cards 1000 times
     shuffleDeck = () => {
-        console.log('shuffling');
         let game = { ...this.state.game };
         for (let i = 0; i < 1000; i++) {
             let x = this.randomNumber();
@@ -88,7 +82,7 @@ export class HighCard extends Component {
     }
     // Helper random number generator.
     randomNumber = () => (
-        Math.floor((Math.random() * (52 - 1) + 1))
+        Math.floor((Math.random() * (52 - 1)))
     );
 
     // Callback to register players from ScoreBoard
@@ -100,13 +94,14 @@ export class HighCard extends Component {
             game.PlayerTwo.Name = name;
         this.setState({ game });
         this.sendSignal();
+
     }
 
     // Callback to send data to the SignalR server
     sendSignal = () => {
         let gameObject = this.state.game;
         this.state.hubConnection
-            .invoke('HighCardSignal', gameObject)
+            .invoke('HighCardSignal', gameObject, this.state.waiting)
             .catch((e) => console.log(e));
     }
 
@@ -125,10 +120,10 @@ export class HighCard extends Component {
                 {game.PlayerOne.Name !== '' && game.PlayerTwo.Name !== '' && this.state.waiting ?
                     (<button onClick={this.startGame.bind(this)}>Start Game</button>) :
                     this.state.waiting ?
-                    (<section className="waiting-button">
-                        <p>waiting on players</p>
-                    </section>):
-                    null
+                        (<section className="waiting-button">
+                            <p>waiting on players</p>
+                        </section>) :
+                        null
                 }
                 {!waiting ?
                     (<GameBoard
